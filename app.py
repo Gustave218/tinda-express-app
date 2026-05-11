@@ -208,11 +208,16 @@ def create_admins():
 # =========================
 def send_status_email(parcel):
 
-    # NO EMAIL
-    if not parcel.receiver_email:
+    # =========================
+    # GET ACCOUNT OWNER
+    # =========================
+    user = User.query.get(parcel.user_id)
+
+    # NO USER EMAIL
+    if not user or not user.email:
         return
 
-    subject = f"Tinda Express - {parcel.status}"
+    subject = f"Tinda Express • {parcel.status}"
 
     html = f"""
 
@@ -239,7 +244,7 @@ def send_status_email(parcel):
             ">
 
                 <img
-                    src='https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'
+                    src='https://tinda-express-app.onrender.com/static/images/logo.png'
                     style='
                         width:90px;
                         height:90px;
@@ -247,6 +252,7 @@ def send_status_email(parcel):
                         object-fit:cover;
                         border:4px solid #ff8a00;
                         margin-bottom:15px;
+                        background:white;
                     '
                 >
 
@@ -301,7 +307,7 @@ def send_status_email(parcel):
                     line-height:1.7;
                 ">
                     Bonjour
-                    <strong>{parcel.receiver_name}</strong>,
+                    <strong>{user.fullname}</strong>,
                 </p>
 
                 <p style="
@@ -447,11 +453,14 @@ def send_status_email(parcel):
 
     msg = Message(
 
-        subject,
+        subject=subject,
 
-        sender=app.config['MAIL_USERNAME'],
+        sender=(
+            "Tinda Express",
+            app.config['MAIL_USERNAME']
+        ),
 
-        recipients=[parcel.receiver_email]
+        recipients=[user.email]
 
     )
 
@@ -464,8 +473,13 @@ def send_status_email(parcel):
 # =========================
 def send_order_confirmation(parcel):
 
-    # NO EMAIL
-    if not parcel.receiver_email:
+    # =========================
+    # GET ACCOUNT OWNER
+    # =========================
+    user = User.query.get(parcel.user_id)
+
+    # NO USER OR EMAIL
+    if not user or not user.email:
         return
 
     subject = "Tinda Express • Demande reçue"
@@ -493,6 +507,19 @@ def send_order_confirmation(parcel):
                 padding:45px 30px;
                 text-align:center;
             ">
+
+                <img
+                    src='https://tinda-express-app.onrender.com/static/images/logo.png'
+                    style='
+                        width:90px;
+                        height:90px;
+                        border-radius:50%;
+                        object-fit:cover;
+                        border:4px solid #ff8a00;
+                        margin-bottom:15px;
+                        background:white;
+                    '
+                >
 
                 <h1 style="
                     color:white;
@@ -547,7 +574,7 @@ def send_order_confirmation(parcel):
                 ">
 
                     Bonjour
-                    <strong>{parcel.receiver_name}</strong>,
+                    <strong>{user.fullname}</strong>,
 
                 </p>
 
@@ -697,17 +724,356 @@ def send_order_confirmation(parcel):
 
     msg = Message(
 
-        subject,
+        subject=subject,
 
-        sender=app.config['MAIL_USERNAME'],
+        sender=(
+            "Tinda Express",
+            app.config['MAIL_USERNAME']
+        ),
 
-        recipients=[parcel.receiver_email]
+        recipients=[user.email]
 
     )
 
     msg.html = html
 
-    mail.send(msg)          
+    mail.send(msg)
+
+
+# =========================
+# SEND ADMIN NEW ORDER EMAIL
+# =========================
+def send_admin_order_email(parcel):
+
+    # =========================
+    # GET USER
+    # =========================
+    user = User.query.get(parcel.user_id)
+
+    if not user:
+        return
+
+    # =========================
+    # ADMIN EMAILS
+    # =========================
+    admin_emails = [
+        "johnnsale54@gmail.com",
+        "contact@gustaveshumbusho.com",
+        "tindaexpress.cd@gmail.com"
+    ]
+
+    subject = "Tinda Express • Nouvelle demande d’envoi"
+
+    html = f"""
+
+    <div style="
+        background:#f4f4f4;
+        padding:30px 15px;
+        font-family:Arial,sans-serif;
+    ">
+
+        <div style="
+            max-width:700px;
+            margin:auto;
+            background:white;
+            border-radius:30px;
+            overflow:hidden;
+            box-shadow:0 5px 20px rgba(0,0,0,0.08);
+        ">
+
+            <!-- HEADER -->
+            <div style="
+                background:#0b1220;
+                padding:45px 30px;
+                text-align:center;
+            ">
+
+                <img
+                    src="https://tinda-express-app.onrender.com/static/images/logo.png"
+                    style="
+                        width:90px;
+                        height:90px;
+                        border-radius:50%;
+                        background:white;
+                        padding:5px;
+                        object-fit:cover;
+                        border:4px solid #ff8a00;
+                        margin-bottom:15px;
+                    "
+                >
+
+                <h1 style="
+                    color:white;
+                    margin:0;
+                    font-size:38px;
+                ">
+                    Tinda Express
+                </h1>
+
+                <div style="
+                    display:inline-block;
+                    margin-top:18px;
+                    background:#1b2435;
+                    color:#ffffff;
+                    padding:12px 24px;
+                    border-radius:30px;
+                    font-size:15px;
+                    font-weight:bold;
+                ">
+                    Nouvelle demande reçue
+                </div>
+
+            </div>
+
+            <!-- BODY -->
+            <div style="
+                padding:40px 30px;
+            ">
+
+                <h2 style="
+                    font-size:34px;
+                    color:#111827;
+                    margin-top:0;
+                ">
+                    Nouvelle demande d’envoi 🚚
+                </h2>
+
+                <div style="
+                    width:90px;
+                    height:6px;
+                    background:#ff8a00;
+                    border-radius:10px;
+                    margin:25px 0;
+                "></div>
+
+                <!-- USER -->
+                <div style="
+                    background:#f9fafb;
+                    border-radius:25px;
+                    padding:30px;
+                    margin-top:30px;
+                ">
+
+                    <h3 style="
+                        margin-top:0;
+                        color:#111827;
+                        font-size:24px;
+                    ">
+                        Expéditeur
+                    </h3>
+
+                    <p style="
+                        font-size:17px;
+                        line-height:1.8;
+                        color:#444;
+                    ">
+                        <strong>Nom :</strong>
+                        {user.fullname}
+                    </p>
+
+                    <p style="
+                        font-size:17px;
+                        line-height:1.8;
+                        color:#444;
+                    ">
+                        <strong>Téléphone :</strong>
+                        {user.phone}
+                    </p>
+
+                    <p style="
+                        font-size:17px;
+                        line-height:1.8;
+                        color:#444;
+                    ">
+                        <strong>Email :</strong>
+                        {user.email or "-"}
+                    </p>
+
+                </div>
+
+                <!-- PARCEL -->
+                <div style="
+                    background:#fff7ed;
+                    border-radius:25px;
+                    padding:30px;
+                    margin-top:30px;
+                ">
+
+                    <h3 style="
+                        margin-top:0;
+                        color:#ff8a00;
+                        font-size:24px;
+                    ">
+                        Détails du colis
+                    </h3>
+
+                    <p style="
+                        font-size:17px;
+                        line-height:1.8;
+                        color:#444;
+                    ">
+                        <strong>Nom du colis :</strong>
+                        {parcel.parcel_name}
+                    </p>
+
+                    <p style="
+                        font-size:17px;
+                        line-height:1.8;
+                        color:#444;
+                    ">
+                        <strong>Catégorie :</strong>
+                        {parcel.category}
+                    </p>
+
+                    <p style="
+                        font-size:17px;
+                        line-height:1.8;
+                        color:#444;
+                    ">
+                        <strong>Destinataire :</strong>
+                        {parcel.receiver_name}
+                    </p>
+
+                    <p style="
+                        font-size:17px;
+                        line-height:1.8;
+                        color:#444;
+                    ">
+                        <strong>Téléphone :</strong>
+                        {parcel.receiver_phone}
+                    </p>
+
+                </div>
+
+                <!-- PICKUP -->
+                <div style="
+                    background:#f9fafb;
+                    border-radius:25px;
+                    padding:30px;
+                    margin-top:30px;
+                ">
+
+                    <h3 style="
+                        margin-top:0;
+                        color:#111827;
+                        font-size:24px;
+                    ">
+                        Ramassage
+                    </h3>
+
+                    <p style="
+                        font-size:17px;
+                        line-height:1.8;
+                        color:#444;
+                    ">
+
+                        {parcel.pickup_ville or ''},
+                        {parcel.pickup_commune or ''},
+                        {parcel.pickup_avenue or ''},
+                        N° {parcel.pickup_numero or ''},
+                        {parcel.pickup_reference or ''}
+
+                    </p>
+
+                </div>
+
+                <!-- DELIVERY -->
+                <div style="
+                    background:#f9fafb;
+                    border-radius:25px;
+                    padding:30px;
+                    margin-top:30px;
+                ">
+
+                    <h3 style="
+                        margin-top:0;
+                        color:#111827;
+                        font-size:24px;
+                    ">
+                        Livraison
+                    </h3>
+
+                    <p style="
+                        font-size:17px;
+                        line-height:1.8;
+                        color:#444;
+                    ">
+
+                        {parcel.delivery_ville or ''},
+                        {parcel.delivery_commune or ''},
+                        {parcel.delivery_avenue or ''},
+                        N° {parcel.delivery_numero or ''},
+                        {parcel.delivery_reference or ''}
+
+                    </p>
+
+                </div>
+
+                <!-- PARCEL IMAGE -->
+                {f'''
+                <div style="margin-top:35px;">
+
+                    <img
+                        src="{parcel.parcel_image}"
+                        style="
+                            width:100%;
+                            border-radius:25px;
+                            object-fit:cover;
+                        "
+                    >
+
+                </div>
+                ''' if parcel.parcel_image else ''}
+
+                <!-- FOOTER -->
+                <div style="
+                    margin-top:45px;
+                    text-align:center;
+                ">
+
+                    <p style="
+                        color:#888;
+                        font-size:16px;
+                        line-height:1.8;
+                    ">
+                        Tableau de bord administratif
+                        <strong>Tinda Express</strong>
+                    </p>
+
+                    <p style="
+                        color:#aaa;
+                        font-size:14px;
+                        margin-top:25px;
+                    ">
+                        Livraison rapide • Sécurisée • Intelligente
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    """
+
+    msg = Message(
+
+        subject=subject,
+
+        sender=(
+            "Tinda Express",
+            app.config['MAIL_USERNAME']
+        ),
+
+        recipients=admin_emails
+
+    )
+
+    msg.html = html
+
+    mail.send(msg)              
 
 # =========================
 # ROUTES
@@ -813,13 +1179,35 @@ def login():
 
     if request.method == "POST":
 
-        phone = request.form.get("phone")
-        password = request.form.get("password")
+        # CLEAN INPUT
+        phone = request.form.get("phone", "").strip()
+        password = request.form.get("password", "").strip()
 
-        # FIND USER
-        user = User.query.filter_by(
-            phone=phone
-        ).first()
+        # REMOVE SPACES
+        clean_phone = (
+            phone
+            .replace(" ", "")
+            .replace("-", "")
+        )
+
+        # GET ALL USERS
+        users = User.query.all()
+
+        user = None
+
+        # FIND MATCHING PHONE
+        for u in users:
+
+            db_phone = (
+                u.phone
+                .replace(" ", "")
+                .replace("-", "")
+            )
+
+            if db_phone == clean_phone:
+
+                user = u
+                break
 
         # USER NOT FOUND
         if not user:
@@ -843,10 +1231,30 @@ def login():
         # =========================
         # ADMIN CHECK
         # =========================
+        admin_phones = [
+            "+243977492678",
+            "+254710603313",
+            "+243822385696"
+        ]
+
+        admin_emails = [
+            "johnnsale54@gmail.com",
+            "contact@gustaveshumbusho.com",
+            "tindaexpress.cd@gmail.com"
+        ]
+
+        user_phone = (
+            user.phone
+            .replace(" ", "")
+            .replace("-", "")
+        )
+
         if (
-            user.email in ADMIN_EMAILS
-            or user.phone in ADMIN_PHONES
+            user.email in admin_emails
+            or user_phone in admin_phones
         ):
+
+            session["is_admin"] = True
 
             return redirect(
                 url_for("admin_dashboard")
@@ -1011,6 +1419,7 @@ def create_parcel():
 
     # SEND CONFIRMATION EMAIL
     send_order_confirmation(new_parcel)
+    send_admin_order_email(new_parcel)
 
     return redirect(url_for("mes_envois"))
 
