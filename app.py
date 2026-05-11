@@ -1175,6 +1175,66 @@ def admin_parcel(parcel_id):
 def index():
     return render_template("index.html")
 
+@app.route("/register", methods=["GET", "POST"])
+def register():
+
+    if request.method == "POST":
+
+        fullname = request.form.get("fullname")
+        phone = request.form.get("phone")
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        # CLEAN PHONE
+        clean_phone = (
+            phone
+            .replace(" ", "")
+            .replace("-", "")
+        )
+
+        # CHECK EXISTING USER
+        users = User.query.all()
+
+        for u in users:
+
+            db_phone = (
+                u.phone
+                .replace(" ", "")
+                .replace("-", "")
+            )
+
+            if db_phone == clean_phone:
+
+                return render_template(
+                    "register.html",
+                    error="Ce numéro existe déjà"
+                )
+
+        # CREATE USER
+        new_user = User(
+
+            fullname=fullname,
+
+            phone=phone,
+
+            email=email,
+
+            password=generate_password_hash(password)
+
+        )
+
+        db.session.add(new_user)
+
+        db.session.commit()
+
+        # LOGIN USER
+        session["user_id"] = new_user.id
+
+        return redirect(
+            url_for("dashboard")
+        )
+
+    return render_template("register.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
