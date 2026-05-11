@@ -194,7 +194,9 @@ def create_admins():
 
                 email=admin["email"],
 
-                password=admin["password"],
+                password=generate_password_hash(
+                    admin["password"]
+                ),
 
                 is_admin=True
 
@@ -1217,8 +1219,11 @@ def login():
                 error="Compte introuvable"
             )
 
-        # WRONG PASSWORD
-        if user.password != password:
+        # PASSWORD CHECK
+        if not check_password_hash(
+            user.password,
+            password
+        ):
 
             return render_template(
                 "login.html",
@@ -1228,9 +1233,7 @@ def login():
         # LOGIN SUCCESS
         session["user_id"] = user.id
 
-        # =========================
         # ADMIN CHECK
-        # =========================
         admin_phones = [
             "+243977492678",
             "+254710603313",
@@ -1260,59 +1263,11 @@ def login():
                 url_for("admin_dashboard")
             )
 
-        # NORMAL USER
         return redirect(
             url_for("dashboard")
         )
 
     return render_template("login.html")
-
-@app.route("/logout")
-def logout():
-
-    session.clear()
-
-    return redirect(url_for("login"))
-
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-
-    if request.method == "POST":
-
-        fullname = request.form["fullname"]
-        phone = request.form["phone"]
-        email = request.form.get("email")
-        password = request.form["password"]
-
-        # CHECK IF USER EXISTS
-        existing_user = User.query.filter_by(phone=phone).first()
-
-        if existing_user:
-            return "Ce numéro existe déjà"
-
-        # HASH PASSWORD
-        hashed_password = generate_password_hash(password)
-
-        # CREATE USER
-        new_user = User(
-            fullname=fullname,
-            phone=phone,
-            email=email,
-            password=hashed_password
-        )
-
-        db.session.add(new_user)
-        db.session.commit()
-
-        # START SESSION
-        session["user_id"] = new_user.id
-        session["fullname"] = new_user.fullname
-
-        # REDIRECT TO DASHBOARD
-        return redirect(url_for("dashboard"))
-
-    return render_template("register.html")
 
 
 @app.route("/dashboard")
@@ -1480,7 +1435,9 @@ def parcel_details(parcel_id):
 if __name__ == "__main__":
 
     with app.app_context():
+
         db.create_all()
+
         create_admins()
 
     app.run(host="0.0.0.0", port=5000, debug=True)
