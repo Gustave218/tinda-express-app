@@ -41,7 +41,7 @@ ADMIN_EMAILS = [
 
 ADMIN_PHONES = [
 
-    "+8615164054096",
+    "+243977492678",
 
     "+254710603313",
 
@@ -164,7 +164,7 @@ def create_admins():
 
         {
             "fullname": "Petero Nsale",
-            "phone": "+8615164054096",
+            "phone": "+243977492678",
             "email": "johnnsale54@gmail.com",
             "password": "Tinda@2020"
         },
