@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="landing-page">
+
+    <!-- VIDEO BACKGROUND -->
+    <video autoplay muted loop playsinline class="bg-video">
+        <source src="{{ url_for('static', filename='videos/delivery.mp4') }}" type="video/mp4">
+    </video>
+
+    <!-- DARK OVERLAY -->
+    <div class="overlay"></div>
+
+    <!-- CONTENT -->
+    <div class="hero-container">
+
+        <!-- LOGO -->
+        <div class="logo-wrapper">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo">
+        </div>
+
+        <!-- TITLE -->
+        <h1 class="hero-title">
+            Tinda Express
+        </h1>
+
+        <!-- SUBTITLE -->
+        <p class="hero-subtitle">
+            Livraison rapide, sécurisée et intelligente partout en RDC.
+        </p>
+
+        <!-- FEATURES -->
+        <div class="hero-features">
+
+            <div class="feature-card">
+                <i class="ri-map-pin-2-fill"></i>
+                <span>Suivi en temps réel</span>
+            </div>
+
+            <div class="feature-card">
+                <i class="ri-truck-fill"></i>
+                <span>Livraison rapide</span>
+            </div>
+
+            <div class="feature-card">
+                <i class="ri-shield-check-fill"></i>
+                <span>Paiement sécurisé</span>
+            </div>
+
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="hero-buttons">
+
+            <a href="/register" class="btn-main">
+                <i class="ri-user-add-fill"></i>
+                Commencer
+            </a>
+
+            <a href="/login" class="btn-secondary">
+                <i class="ri-login-box-fill"></i>
+                Se connecter
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

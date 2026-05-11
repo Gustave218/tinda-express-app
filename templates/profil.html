@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="profile-page">
+
+    <!-- TOP -->
+    <div class="profile-top">
+
+        <div class="profile-cover"></div>
+
+        <div class="profile-avatar">
+
+            {{ user.fullname[0] }}
+
+        </div>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div class="profile-content">
+
+        <h1>
+
+            {{ user.fullname }}
+
+        </h1>
+
+        <p class="profile-subtitle">
+
+            Client Tinda Express
+
+        </p>
+
+        <!-- CARD -->
+        <div class="profile-card">
+
+            <h2>
+
+                Informations personnelles
+
+            </h2>
+
+            <!-- PHONE -->
+            <div class="profile-info-item">
+
+                <div class="profile-icon">
+
+                    <i class="ri-phone-fill"></i>
+
+                </div>
+
+                <div>
+
+                    <small>Téléphone</small>
+
+                    <h3>
+
+                        {{ user.phone }}
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+            <!-- EMAIL -->
+            <div class="profile-info-item">
+
+                <div class="profile-icon">
+
+                    <i class="ri-mail-fill"></i>
+
+                </div>
+
+                <div>
+
+                    <small>Adresse email</small>
+
+                    <h3>
+
+                        {% if user.email %}
+
+                            {{ user.email }}
+
+                        {% else %}
+
+                            Aucun email ajouté
+
+                        {% endif %}
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ACTIONS -->
+        
+
+            <a href="/logout" class="logout-profile-btn">
+
+                <i class="ri-logout-box-r-line"></i>
+
+                Déconnexion
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- NAVBAR -->
+<div class="bottom-nav">
+
+    <a href="/dashboard" class="nav-item">
+
+        <i class="ri-home-5-fill"></i>
+
+        <span>Accueil</span>
+
+    </a>
+
+    <a href="/mes-envois" class="nav-item">
+
+        <i class="ri-box-3-fill"></i>
+
+        <span>Mes envois</span>
+
+    </a>
+
+    <a href="/profil" class="nav-item active">
+
+        <i class="ri-user-3-fill"></i>
+
+        <span>Profil</span>
+
+    </a>
+
+</div>
+
+{% endblock %}

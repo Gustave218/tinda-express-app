@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="details-page">
+
+    <!-- IMAGE -->
+    <div class="details-image">
+
+        {% if parcel.parcel_image %}
+
+        <img
+            src="{{ parcel.parcel_image }}"
+            alt="Colis"
+        >
+
+        {% else %}
+
+        <img
+            src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1200&auto=format&fit=crop"
+            alt="Colis"
+        >
+
+        {% endif %}
+
+        <!-- BACK -->
+        <a href="/mes-envois" class="back-btn">
+
+            <i class="ri-arrow-left-line"></i>
+
+        </a>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div class="details-content">
+
+        <!-- STATUS -->
+        <div class="details-status">
+
+            {{ parcel.status or "En attente" }}
+
+        </div>
+
+        <!-- TITLE -->
+        <h1>
+
+            {{ parcel.parcel_name or "Colis" }}
+
+        </h1>
+
+        <!-- CATEGORY -->
+        <p class="details-category">
+
+            {{ parcel.category or "Autres" }}
+
+        </p>
+
+        <!-- DESCRIPTION -->
+        {% if parcel.parcel_description %}
+
+        <div class="description-box">
+
+            <h3>Description</h3>
+
+            <p>
+
+                {{ parcel.parcel_description }}
+
+            </p>
+
+        </div>
+
+        {% endif %}
+
+        <!-- DETAILS -->
+        <div class="details-box">
+
+            <!-- PICKUP -->
+            <div class="detail-line">
+
+                <i class="ri-map-pin-line"></i>
+
+                <div class="detail-text">
+
+                    <strong>Ramassage</strong>
+
+                    <span>
+                        {{ parcel.pickup_ville or "" }}
+                    </span>
+
+                    <small>
+                        Commune: {{ parcel.pickup_commune or "-" }}
+                    </small>
+
+                    <small>
+                        Avenue: {{ parcel.pickup_avenue or "-" }}
+                    </small>
+
+                    <small>
+                        Numéro: {{ parcel.pickup_numero or "-" }}
+                    </small>
+
+                    <small>
+                        Référence: {{ parcel.pickup_reference or "-" }}
+                    </small>
+
+                </div>
+
+            </div>
+
+            <!-- DELIVERY -->
+            <div class="detail-line">
+
+                <i class="ri-navigation-line"></i>
+
+                <div class="detail-text">
+
+                    <strong>Livraison</strong>
+
+                    <span>
+                        {{ parcel.delivery_ville or "" }}
+                    </span>
+
+                    <small>
+                        Commune: {{ parcel.delivery_commune or "-" }}
+                    </small>
+
+                    <small>
+                        Avenue: {{ parcel.delivery_avenue or "-" }}
+                    </small>
+
+                    <small>
+                        Numéro: {{ parcel.delivery_numero or "-" }}
+                    </small>
+
+                    <small>
+                        Référence: {{ parcel.delivery_reference or "-" }}
+                    </small>
+
+                </div>
+
+            </div>
+
+            <!-- RECEIVER -->
+            <div class="detail-line">
+
+                <i class="ri-user-3-line"></i>
+
+                <div class="detail-text">
+
+                    <strong>Destinataire</strong>
+
+                    <span>
+
+                        {{ parcel.receiver_name or "Non défini" }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- PHONE -->
+            <div class="detail-line">
+
+                <i class="ri-phone-line"></i>
+
+                <div class="detail-text">
+
+                    <strong>Téléphone</strong>
+
+                    <span>
+
+                        {{ parcel.receiver_phone or "-" }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- EMAIL -->
+            {% if parcel.receiver_email %}
+
+            <div class="detail-line">
+
+                <i class="ri-mail-line"></i>
+
+                <div class="detail-text">
+
+                    <strong>Email</strong>
+
+                    <span>
+
+                        {{ parcel.receiver_email }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+        <!-- DELIVERY PROOF -->
+        {% if parcel.delivery_proof_image %}
+
+        <div class="proof-box">
+
+            <div class="proof-success">
+
+                <i class="ri-checkbox-circle-fill"></i>
+
+                <div>
+
+                    <h3>Livré avec succès</h3>
+
+                    <p>
+                        Le colis a bien été remis au destinataire.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <img
+            src="{{ parcel.delivery_proof_image }}"
+            class="proof-image"
+            alt="preuve livraison"
+            >
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+
+    <a href="/dashboard" class="nav-item">
+
+        <i class="ri-home-5-fill"></i>
+
+        <span>Accueil</span>
+
+    </a>
+
+    <a href="/mes-envois" class="nav-item active">
+
+        <i class="ri-box-3-fill"></i>
+
+        <span>Mes envois</span>
+
+    </a>
+
+    <a href="/profil" class="nav-item">
+
+        <i class="ri-user-3-fill"></i>
+
+        <span>Profil</span>
+
+    </a>
+
+</div>
+
+{% endblock %}

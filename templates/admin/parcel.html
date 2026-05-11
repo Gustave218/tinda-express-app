@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="admin-details-page">
+
+    <!-- IMAGE -->
+    <div class="admin-details-image">
+
+        <img
+            src="{{ parcel.parcel_image }}"
+        >
+
+    </div>
+
+    <!-- CONTENT -->
+    <div class="admin-details-content">
+
+        <h1>
+
+            {{ parcel.parcel_name }}
+
+        </h1>
+
+        <div class="admin-status-big">
+
+            {{ parcel.status }}
+
+        </div>
+
+        <!-- DETAILS -->
+        <div class="admin-info-box">
+
+            <p>
+                <strong>Catégorie:</strong>
+                {{ parcel.category }}
+            </p>
+
+            <p>
+                <strong>Destinataire:</strong>
+                {{ parcel.receiver_name }}
+            </p>
+
+            <p>
+                <strong>Téléphone:</strong>
+                {{ parcel.receiver_phone }}
+            </p>
+
+            <p>
+                <strong>Email:</strong>
+                {{ parcel.receiver_email }}
+            </p>
+
+        </div>
+
+        <!-- FORM -->
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            class="admin-update-form"
+        >
+
+            <!-- STATUS -->
+            <label>
+
+                Statut du colis
+
+            </label>
+
+            <select
+                name="status"
+                required
+            >
+
+                <option value="En attente">
+                    En attente
+                </option>
+
+                <option value="En préparation">
+                    En préparation
+                </option>
+
+                <option value="En cours de livraison">
+                    En cours de livraison
+                </option>
+
+                <option value="Arrivé">
+                    Arrivé
+                </option>
+
+                <option value="Livré">
+                    Livré
+                </option>
+
+            </select>
+
+            <!-- PROOF -->
+            <label>
+
+                Preuve de livraison
+
+            </label>
+
+            <input
+                type="file"
+                name="delivery_proof_image"
+                accept="image/*"
+            >
+
+            <!-- BUTTON -->
+            <button class="admin-save-btn">
+
+                Mettre à jour
+
+            </button>
+
+        </form>
+
+        <!-- PROOF IMAGE -->
+        {% if parcel.delivery_proof_image %}
+
+        <div class="proof-admin-box">
+
+            <h3>
+                Preuve de livraison
+            </h3>
+
+            <img
+                src="{{ parcel.delivery_proof_image }}"
+                class="proof-admin-image"
+            >
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
