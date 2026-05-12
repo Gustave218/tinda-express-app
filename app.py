@@ -1181,27 +1181,21 @@ def register():
     if request.method == "POST":
 
         fullname = request.form.get("fullname")
-        phone = request.form.get("phone")
+        phone = normalize_phone(
+        request.form.get("phone")
+        )
         email = request.form.get("email")
         password = request.form.get("password")
 
         # CLEAN PHONE
-        clean_phone = (
-            phone
-            .replace(" ", "")
-            .replace("-", "")
-        )
+        clean_phone = normalize_phone(phone)
 
         # CHECK EXISTING USER
         users = User.query.all()
 
         for u in users:
 
-            db_phone = (
-                u.phone
-                .replace(" ", "")
-                .replace("-", "")
-            )
+            db_phone = normalize_phone(u.phone)
 
             if db_phone == clean_phone:
 
@@ -1241,30 +1235,28 @@ def login():
 
     if request.method == "POST":
 
-        # CLEAN INPUT
-        phone = request.form.get("phone", "").strip()
-        password = request.form.get("password", "").strip()
+        # INPUTS
+        phone = request.form.get(
+            "phone",
+            ""
+        ).strip()
 
-        # REMOVE SPACES
-        clean_phone = (
-            phone
-            .replace(" ", "")
-            .replace("-", "")
-        )
+        password = request.form.get(
+            "password",
+            ""
+        ).strip()
 
-        # GET ALL USERS
+        # NORMALIZE PHONE
+        clean_phone = normalize_phone(phone)
+
+        # FIND USER
         users = User.query.all()
 
         user = None
 
-        # FIND MATCHING PHONE
         for u in users:
 
-            db_phone = (
-                u.phone
-                .replace(" ", "")
-                .replace("-", "")
-            )
+            db_phone = normalize_phone(u.phone)
 
             if db_phone == clean_phone:
 
@@ -1279,7 +1271,7 @@ def login():
                 error="Compte introuvable"
             )
 
-        # PASSWORD CHECK
+        # WRONG PASSWORD
         if not check_password_hash(
             user.password,
             password
@@ -1293,29 +1285,8 @@ def login():
         # LOGIN SUCCESS
         session["user_id"] = user.id
 
-        # ADMIN CHECK
-        admin_phones = [
-            "+243977492678",
-            "+254710603313",
-            "+243822385696"
-        ]
-
-        admin_emails = [
-            "johnnsale54@gmail.com",
-            "contact@gustaveshumbusho.com",
-            "tindaexpress.cd@gmail.com"
-        ]
-
-        user_phone = (
-            user.phone
-            .replace(" ", "")
-            .replace("-", "")
-        )
-
-        if (
-            user.email in admin_emails
-            or user_phone in admin_phones
-        ):
+        # ADMIN
+        if user.is_admin:
 
             session["is_admin"] = True
 
@@ -1323,6 +1294,7 @@ def login():
                 url_for("admin_dashboard")
             )
 
+        # NORMAL USER
         return redirect(
             url_for("dashboard")
         )
@@ -1485,7 +1457,25 @@ def parcel_details(parcel_id):
     return render_template(
         "parcel-details.html",
         parcel=parcel
-    )       
+    ) 
+
+def normalize_phone(phone):
+
+    phone = (
+        phone
+        .replace(" ", "")
+        .replace("-", "")
+    )
+
+    # 0991234567 -> +243991234567
+    if phone.startswith("0"):
+        phone = "+243" + phone[1:]
+
+    # 243991234567 -> +243991234567
+    elif phone.startswith("243"):
+        phone = "+" + phone
+
+    return phone          
 
 
 

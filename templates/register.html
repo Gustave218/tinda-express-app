@@ -11,20 +11,49 @@
 
         <!-- LOGO -->
         <div class="auth-logo-box">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" class="auth-logo">
+
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                class="auth-logo"
+            >
+
         </div>
 
         <!-- TITLE -->
         <h1 class="auth-title">
+
             Créer un compte
+
         </h1>
 
         <p class="auth-subtitle">
+
             Rejoignez Tinda Express et commencez vos livraisons.
+
         </p>
 
+        <!-- ERROR -->
+        {% if error %}
+
+        <div class="auth-error">
+
+            <i class="ri-error-warning-fill"></i>
+
+            <span>
+
+                {{ error }}
+
+            </span>
+
+        </div>
+
+        {% endif %}
+
         <!-- FORM -->
-        <form class="auth-form" method="POST">
+        <form
+            class="auth-form"
+            method="POST"
+        >
 
             <!-- FULLNAME -->
             <div class="input-box">
@@ -34,6 +63,7 @@
                 <input
                     type="text"
                     name="fullname"
+                    value="{{ request.form.get('fullname', '') }}"
                     placeholder="Nom complet"
                     required
                 >
@@ -48,6 +78,7 @@
                 <input
                     type="tel"
                     name="phone"
+                    value="{{ request.form.get('phone', '') }}"
                     placeholder="Téléphone"
                     required
                 >
@@ -62,6 +93,7 @@
                 <input
                     type="email"
                     name="email"
+                    value="{{ request.form.get('email', '') }}"
                     placeholder="Adresse email"
                 >
 
@@ -85,13 +117,21 @@
                     class="toggle-password"
                     onclick="togglePassword()"
                 >
-                    <i class="ri-eye-line" id="eyeIcon"></i>
+
+                    <i
+                        class="ri-eye-line"
+                        id="eyeIcon"
+                    ></i>
+
                 </button>
 
             </div>
 
             <!-- BUTTON -->
-            <button class="btn-auth" id="registerBtn">
+            <button
+                class="btn-auth"
+                id="registerBtn"
+            >
 
                 <i class="ri-user-add-fill"></i>
 
@@ -104,10 +144,16 @@
         <!-- LOGIN -->
         <div class="auth-bottom">
 
-            <span>Vous avez déjà un compte ?</span>
+            <span>
+
+                Vous avez déjà un compte ?
+
+            </span>
 
             <a href="/login">
+
                 Se connecter
+
             </a>
 
         </div>
@@ -120,8 +166,11 @@
 
 function togglePassword(){
 
-    const password = document.getElementById("password");
-    const eyeIcon = document.getElementById("eyeIcon");
+    const password =
+        document.getElementById("password");
+
+    const eyeIcon =
+        document.getElementById("eyeIcon");
 
     if(password.type === "password"){
 
@@ -139,9 +188,12 @@ function togglePassword(){
 
 }
 
-document.querySelector(".auth-form").addEventListener("submit", function(){
+document
+.querySelector(".auth-form")
+.addEventListener("submit", function(){
 
-    const btn = document.getElementById("registerBtn");
+    const btn =
+        document.getElementById("registerBtn");
 
     btn.innerHTML = `
         <i class="ri-loader-4-line spin"></i>

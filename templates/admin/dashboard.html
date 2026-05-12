@@ -19,10 +19,12 @@
 
         <div class="admin-card">
 
+            {% if parcel.parcel_image %}
             <img
                 src="{{ parcel.parcel_image }}"
                 class="admin-image"
             >
+            {% endif %}
 
             <div class="admin-content">
 
