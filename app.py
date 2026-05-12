@@ -8,9 +8,13 @@ import cloudinary
 import cloudinary.uploader
 from flask_mail import Mail, Message
 from dotenv import load_dotenv
-import json
 from datetime import timedelta
-from pywebpush import webpush
+import json
+
+from pywebpush import (
+    webpush,
+    WebPushException
+)
 
 
 

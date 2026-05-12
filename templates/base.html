@@ -1,22 +1,67 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-<link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
->
-<title>Tinda Express</title>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta charset="UTF-8">
 
-<link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
 
-<link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <title>Tinda Express</title>
 
-<meta name="theme-color" content="#ff7b00">
+    <!-- CSS -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <!-- REMIX ICON -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"
+        rel="stylesheet"
+    >
+
+    <!-- PWA -->
+    <link
+        rel="manifest"
+        href="{{ url_for('static', filename='manifest.json') }}"
+    >
+
+    <meta
+        name="theme-color"
+        content="#ff7b00"
+    >
+
+    <!-- IOS PWA -->
+    <meta
+        name="apple-mobile-web-app-capable"
+        content="yes"
+    >
+
+    <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="black-translucent"
+    >
+
+    <meta
+        name="apple-mobile-web-app-title"
+        content="Tinda Express"
+    >
+
+    <link
+        rel="apple-touch-icon"
+        href="{{ url_for('static', filename='images/logo.png') }}"
+    >
+
+    <!-- FAVICON -->
+    <link
+        rel="icon"
+        type="image/png"
+        href="{{ url_for('static', filename='images/logo.png') }}"
+    >
 
 </head>
 
@@ -24,50 +69,108 @@
 
 {% block content %}{% endblock %}
 
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<!-- INSTALL POPUP -->
+<div
+    class="install-popup"
+    id="installPopup"
+    style="display:none;"
+>
 
+    <div class="install-content">
 
+        <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            class="install-logo"
+        >
+
+        <h3>
+            Installer Tinda Express
+        </h3>
+
+        <p>
+            Accédez rapidement à vos livraisons.
+        </p>
+
+        <button
+            id="installBtn"
+        >
+            Installer
+        </button>
+
+    </div>
+
+</div>
+
+<!-- APP JS -->
+<script
+    src="{{ url_for('static', filename='js/app.js') }}"
+></script>
+
+<!-- SERVICE WORKER -->
+<script>
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener(
+        "load",
+        async () => {
+
+            try {
+
+                await navigator
+                .serviceWorker
+                .register(
+                    "/static/sw.js"
+                );
+
+                console.log(
+                    "Service Worker registered"
+                );
+
+            } catch (error) {
+
+                console.log(error);
+
+            }
+
+        }
+    );
+
+}
+
+</script>
+
+<!-- INSTALL PWA -->
 <script>
 
 let deferredPrompt;
 
-window.addEventListener('beforeinstallprompt', (e) => {
+window.addEventListener(
+    "beforeinstallprompt",
+    (e) => {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    deferredPrompt = e;
+        deferredPrompt = e;
 
-    const installBox = document.createElement("div");
+        document
+        .getElementById("installPopup")
+        .style.display = "flex";
 
-    installBox.className = "install-popup";
+    }
+);
 
-    installBox.innerHTML = `
-    
-        <div class="install-content">
+document
+.getElementById("installBtn")
+.addEventListener(
+    "click",
+    async () => {
 
-            <h3>
-                Installer Tinda Express
-            </h3>
+        if(!deferredPrompt){
 
-            <p>
-                Accédez plus rapidement à vos colis.
-            </p>
+            return;
 
-            <button id="installBtn">
-                Installer
-            </button>
-
-        </div>
-
-    `;
-
-    document.body.appendChild(installBox);
-
-    document
-    .getElementById("installBtn")
-    .addEventListener("click", async () => {
-
-        installBox.remove();
+        }
 
         deferredPrompt.prompt();
 
@@ -75,67 +178,86 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
         deferredPrompt = null;
 
-    });
+        document
+        .getElementById("installPopup")
+        .style.display = "none";
 
-});
+    }
+);
 
 </script>
 
+<!-- PUSH NOTIFICATIONS -->
 <script>
 
 async function initPushNotifications(){
 
-    if(!("serviceWorker" in navigator)){
+    if(
+        !("serviceWorker" in navigator)
+    ){
 
         return;
+
     }
 
     try{
-
-        // REGISTER SERVICE WORKER
-        const registration =
-        await navigator.serviceWorker.register(
-            "/static/js/service-worker.js"
-        );
 
         // ASK PERMISSION
         const permission =
         await Notification.requestPermission();
 
-        if(permission !== "granted"){
+        if(
+            permission !== "granted"
+        ){
+
+            console.log(
+                "Notification refused"
+            );
 
             return;
+
         }
 
-        // CREATE SUBSCRIPTION
+        // GET SERVICE WORKER
+        const registration =
+        await navigator.serviceWorker.ready;
+
+        // SUBSCRIBE
         const subscription =
         await registration.pushManager.subscribe({
 
             userVisibleOnly: true,
 
-            applicationServerKey: urlBase64ToUint8Array(
+            applicationServerKey:
+            urlBase64ToUint8Array(
                 "{{ config['VAPID_PUBLIC_KEY'] }}"
             )
 
         });
 
-        // SAVE TO DATABASE
-        await fetch("/save-subscription", {
+        // SAVE SUBSCRIPTION
+        await fetch(
+            "/save-subscription",
+            {
 
-            method: "POST",
+                method: "POST",
 
-            headers: {
+                headers: {
 
-                "Content-Type": "application/json"
+                    "Content-Type":
+                    "application/json"
 
-            },
+                },
 
-            body: JSON.stringify(subscription)
+                body: JSON.stringify(
+                    subscription
+                )
 
-        });
+            }
+        );
 
         console.log(
-            "Push notifications activated"
+            "Push activated"
         );
 
     }catch(error){
@@ -147,25 +269,38 @@ async function initPushNotifications(){
 }
 
 // CONVERT VAPID KEY
-function urlBase64ToUint8Array(base64String){
+function urlBase64ToUint8Array(
+    base64String
+){
 
     const padding =
-        '='.repeat(
-            (4 - base64String.length % 4) % 4
+        "=".repeat(
+            (
+                4 -
+                base64String.length % 4
+            ) % 4
         );
 
     const base64 =
-        (base64String + padding)
-        .replace(/-/g, '+')
-        .replace(/_/g, '/');
+        (
+            base64String + padding
+        )
+        .replace(/\-/g, "+")
+        .replace(/_/g, "/");
 
     const rawData =
         window.atob(base64);
 
     const outputArray =
-        new Uint8Array(rawData.length);
+        new Uint8Array(
+            rawData.length
+        );
 
-    for(let i = 0; i < rawData.length; ++i){
+    for(
+        let i = 0;
+        i < rawData.length;
+        ++i
+    ){
 
         outputArray[i] =
             rawData.charCodeAt(i);
@@ -173,10 +308,24 @@ function urlBase64ToUint8Array(base64String){
     }
 
     return outputArray;
+
 }
 
-initPushNotifications();
+// START PUSH
+window.addEventListener(
+    "load",
+    () => {
+
+        setTimeout(() => {
+
+            initPushNotifications();
+
+        }, 3000);
+
+    }
+);
 
 </script>
+
 </body>
 </html>

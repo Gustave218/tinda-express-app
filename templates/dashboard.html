@@ -454,50 +454,87 @@ function previewParcelImage(event) {
 
     if (!file) return;
 
-    const preview = document.getElementById("parcelPreview");
-    const img = document.getElementById("parcelPreviewImg");
+    const preview =
+        document.getElementById("parcelPreview");
+
+    const img =
+        document.getElementById("parcelPreviewImg");
 
     img.src = URL.createObjectURL(file);
 
     preview.style.display = "block";
 }
 
-const form = document.getElementById("parcelForm");
-const button = document.getElementById("sendBtn");
+const form =
+    document.getElementById("parcelForm");
+
+const button =
+    document.getElementById("sendBtn");
 
 form.addEventListener("submit", function(e) {
 
-    const requiredFields = form.querySelectorAll("[required]");
+    // CATEGORY CHECK
+    const categorySelected =
+        document.querySelector(
+            'input[name="category"]:checked'
+        );
+
+    if (!categorySelected) {
+
+        e.preventDefault();
+
+        document.querySelector(".category-grid")
+        .scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "center"
+
+        });
+
+        alert(
+            "Veuillez sélectionner une catégorie"
+        );
+
+        return;
+    }
+
+    // REQUIRED INPUTS
+    const requiredFields =
+        form.querySelectorAll(
+            "input[required]"
+        );
 
     for (let field of requiredFields) {
 
-        // RADIO
-        if (field.type === "radio") {
+        // FILE IMAGE
+        if (
+            field.type === "file" &&
+            field.files.length === 0
+        ) {
 
-            const radioGroup = form.querySelectorAll(
-                `input[name="${field.name}"]`
+            e.preventDefault();
+
+            document
+            .getElementById("uploadBox")
+            .scrollIntoView({
+
+                behavior: "smooth",
+
+                block: "center"
+
+            });
+
+            alert(
+                "Veuillez ajouter une photo du colis"
             );
 
-            const checked = [...radioGroup].some(r => r.checked);
-
-            if (!checked) {
-
-                e.preventDefault();
-
-                radioGroup[0].scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
-
-                alert("Veuillez sélectionner une catégorie");
-
-                return;
-            }
+            return;
         }
 
         // EMPTY FIELD
         if (
-            field.type !== "radio" &&
+            field.type !== "file" &&
             !field.value.trim()
         ) {
 
@@ -506,36 +543,22 @@ form.addEventListener("submit", function(e) {
             field.focus();
 
             field.scrollIntoView({
+
                 behavior: "smooth",
+
                 block: "center"
+
             });
 
-            alert("Veuillez remplir ce champ");
-
-            return;
-        }
-
-        // IMAGE
-        if (
-            field.type === "file" &&
-            field.files.length === 0
-        ) {
-
-            e.preventDefault();
-
-            document.getElementById("uploadBox")
-            .scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-
-            alert("Veuillez ajouter une photo du colis");
+            alert(
+                "Veuillez remplir tous les champs"
+            );
 
             return;
         }
     }
 
-    // BUTTON LOADING
+    // LOADING BUTTON
     button.disabled = true;
 
     button.innerHTML = `
