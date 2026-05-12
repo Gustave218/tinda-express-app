@@ -17,6 +17,10 @@ load_dotenv()
 
 app = Flask(__name__)
 
+from datetime import timedelta
+
+app.permanent_session_lifetime = timedelta(days=365)
+
 # =========================
 # CONFIG
 # =========================
@@ -1220,7 +1224,7 @@ def register():
         db.session.add(new_user)
 
         db.session.commit()
-
+        session.permanent = True
         # LOGIN USER
         session["user_id"] = new_user.id
 
@@ -1281,7 +1285,8 @@ def login():
                 "login.html",
                 error="Mot de passe incorrect"
             )
-
+        
+        session.permanent = True
         # LOGIN SUCCESS
         session["user_id"] = user.id
 
