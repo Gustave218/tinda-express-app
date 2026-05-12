@@ -8,7 +8,9 @@ import cloudinary
 import cloudinary.uploader
 from flask_mail import Mail, Message
 from dotenv import load_dotenv
-
+import json
+from datetime import timedelta
+from pywebpush import webpush
 
 
 
@@ -17,9 +19,20 @@ load_dotenv()
 
 app = Flask(__name__)
 
-from datetime import timedelta
+app.permanent_session_lifetime = timedelta(
+    days=365
+)
 
 app.permanent_session_lifetime = timedelta(days=365)
+
+
+app.config["VAPID_PUBLIC_KEY"] = os.getenv(
+    "VAPID_PUBLIC_KEY"
+)
+
+app.config["VAPID_PRIVATE_KEY"] = os.getenv(
+    "VAPID_PRIVATE_KEY"
+)
 
 # =========================
 # CONFIG
@@ -154,6 +167,22 @@ class Parcel(db.Model):
         db.String(100),
         default="En attente"
     )
+
+class PushSubscription(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id")
+    )
+
+    subscription = db.Column(
+        db.Text
+    )    
 
 def create_admins():
 
@@ -1160,6 +1189,15 @@ def admin_parcel(parcel_id):
         # SAVE
         db.session.commit()
 
+        send_push_notification(
+
+            parcel.user_id,
+
+            "Tinda Express",
+
+            f"Votre colis est maintenant : {parcel.status}"
+
+        )
         # SEND EMAIL
         send_status_email(parcel)
 
@@ -1409,6 +1447,15 @@ def create_parcel():
 
     db.session.commit()
 
+    send_push_notification(
+
+        session["user_id"],
+
+        "Tinda Express",
+
+        "Votre demande a été envoyée avec succès 🚚"
+
+    )
     # SEND CONFIRMATION EMAIL
     send_order_confirmation(new_parcel)
     send_admin_order_email(new_parcel)
@@ -1482,7 +1529,83 @@ def normalize_phone(phone):
 
     return phone          
 
+@app.route(
+    "/save-subscription",
+    methods=["POST"]
+)
+def save_subscription():
 
+    if "user_id" not in session:
+        return {"success": False}
+
+    data = request.json
+
+    existing = PushSubscription.query.filter_by(
+        user_id=session["user_id"]
+    ).first()
+
+    if existing:
+
+        existing.subscription = json.dumps(data)
+
+    else:
+
+        sub = PushSubscription(
+
+            user_id=session["user_id"],
+
+            subscription=json.dumps(data)
+
+        )
+
+        db.session.add(sub)
+
+    db.session.commit()
+
+    return {"success": True}
+
+def send_push_notification(
+    user_id,
+    title,
+    body
+):
+
+    subscriptions = PushSubscription.query.filter_by(
+        user_id=user_id
+    ).all()
+
+    for sub in subscriptions:
+
+        try:
+
+            webpush(
+
+                subscription_info=json.loads(
+                    sub.subscription
+                ),
+
+                data=json.dumps({
+
+                    "title": title,
+
+                    "body": body
+
+                }),
+
+                vapid_private_key=app.config[
+                    "VAPID_PRIVATE_KEY"
+                ],
+
+                vapid_claims={
+                    "sub":
+                    "mailto:contact@gustaveshumbusho.com"
+                }
+
+            )
+
+        except Exception as e:
+
+            print(e)    
 
 # =========================
 # RUN
