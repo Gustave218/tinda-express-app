@@ -156,7 +156,10 @@ class Parcel(db.Model):
     receiver_phone = db.Column(db.String(100))
 
     receiver_email = db.Column(db.String(200))
-
+    user = db.relationship(
+    "User",
+    backref="parcels"
+    )
     # PARCEL
     parcel_name = db.Column(db.String(200))
 
@@ -1219,6 +1222,31 @@ def admin_parcel(parcel_id):
 
 @app.route("/")
 def index():
+
+    if "user_id" in session:
+
+        user = User.query.get(
+            session["user_id"]
+        )
+
+        # VALID USER
+        if user:
+
+            # ADMIN
+            if user.is_admin:
+
+                return redirect(
+                    url_for("admin_dashboard")
+                )
+
+            # NORMAL USER
+            return redirect(
+                url_for("dashboard")
+            )
+
+        # INVALID SESSION
+        session.clear()
+
     return render_template("index.html")
 
 @app.route("/register", methods=["GET", "POST"])
@@ -1230,7 +1258,10 @@ def register():
         phone = normalize_phone(
         request.form.get("phone")
         )
-        email = request.form.get("email")
+        email = request.form.get(
+            "email",
+            ""
+        ).strip().lower()
         password = request.form.get("password")
 
         # CLEAN PHONE
@@ -1275,6 +1306,15 @@ def register():
         )
 
     return render_template("register.html")
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect(
+        url_for("login")
+    )    
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
