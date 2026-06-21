@@ -3,6 +3,25 @@
 
 <div class="admin-details-page page">
 
+    <div class="dashboard-top">
+
+        <div class="brand-box">
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                class="top-logo"
+            >
+            <div>
+                <h2>{{ parcel.parcel_name }}</h2>
+                <p>{{ parcel.category }}</p>
+            </div>
+        </div>
+
+        <a href="/admin" class="logout-btn">
+            <i class="ri-arrow-left-line"></i>
+        </a>
+
+    </div>
+
     {% if parcel.parcel_image %}
     <div style="position:relative;">
         <img src="{{ parcel.parcel_image }}" class="admin-hero-image">
@@ -63,12 +82,15 @@
             enctype="multipart/form-data"
         >
 
+            <h2 class="section-title">Mettre à jour le statut</h2>
+
             <div class="select-wrapper">
                 <select name="status">
                     {% for s in ["En attente", "Pris en charge", "En transit", "Livré"] %}
                     <option value="{{ s }}" {% if parcel.status == s %}selected{% endif %}>{{ s }}</option>
                     {% endfor %}
                 </select>
+                <i class="ri-arrow-down-s-line"></i>
             </div>
 
             <label class="custom-upload">

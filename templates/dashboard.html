@@ -64,7 +64,7 @@
                 <div class="category-grid">
 
                     <label class="modern-category">
-                        <input type="radio" name="category[]" value="À manger" required>
+                        <input type="radio" class="category-radio" name="category_block_0" value="À manger">
                         <div class="category-content">
                             <div class="category-icon food-bg"><i class="ri-restaurant-2-fill"></i></div>
                             <h3>À manger</h3>
@@ -73,7 +73,7 @@
                     </label>
 
                     <label class="modern-category">
-                        <input type="radio" name="category[]" value="Documents" required>
+                        <input type="radio" class="category-radio" name="category_block_0" value="Documents">
                         <div class="category-content">
                             <div class="category-icon doc-bg"><i class="ri-file-paper-2-fill"></i></div>
                             <h3>Documents</h3>
@@ -82,7 +82,7 @@
                     </label>
 
                     <label class="modern-category">
-                        <input type="radio" name="category[]" value="Colis fragile" required>
+                        <input type="radio" class="category-radio" name="category_block_0" value="Colis fragile">
                         <div class="category-content">
                             <div class="category-icon fragile-bg"><i class="ri-box-3-fill"></i></div>
                             <h3>Fragile</h3>
@@ -91,7 +91,7 @@
                     </label>
 
                     <label class="modern-category">
-                        <input type="radio" name="category[]" value="Autres" required>
+                        <input type="radio" class="category-radio" name="category_block_0" value="Autres">
                         <div class="category-content">
                             <div class="category-icon other-bg"><i class="ri-shopping-bag-3-fill"></i></div>
                             <h3>Autres</h3>
@@ -100,6 +100,13 @@
                     </label>
 
                 </div>
+
+                <div class="auth-error category-error" style="display:none;">
+                    <i class="ri-error-warning-fill"></i>
+                    <span>Veuillez sélectionner une catégorie</span>
+                </div>
+
+                <input type="hidden" name="category[]" class="category-value" value="">
 
                 <!-- LOCATION CARD -->
                 <div class="location-card">
@@ -206,7 +213,6 @@
                             type="file"
                             name="parcel_image[]"
                             accept="image/*"
-                            required
                         >
                         <div class="upload-inner">
                             <div class="upload-icon"><i class="ri-image-add-fill"></i></div>
@@ -295,6 +301,8 @@ const addBtn = document.getElementById("addParcelBtn");
 const form = document.getElementById("parcelForm");
 const sendBtn = document.getElementById("sendBtn");
 
+let blockCounter = 0;
+
 function refreshBlocks(){
 
     const blocks = container.querySelectorAll(".parcel-block");
@@ -311,21 +319,38 @@ function refreshBlocks(){
 
 }
 
+function hideCategoryError(block){
+
+    const error = block.querySelector(".category-error");
+
+    if(error) error.style.display = "none";
+
+}
+
 addBtn.addEventListener("click", () => {
 
     const firstBlock = container.querySelector(".parcel-block");
     const newBlock = firstBlock.cloneNode(true);
 
+    blockCounter++;
+
+    // GIVE THIS BLOCK'S RADIOS THEIR OWN GROUP NAME
+    // (so selecting a category here doesn't uncheck other blocks)
+    newBlock.querySelectorAll(".category-radio").forEach(radio => {
+        radio.name = `category_block_${blockCounter}`;
+        radio.checked = false;
+    });
+
     // RESET VALUES
     newBlock.querySelectorAll("input").forEach(input => {
 
-        if(input.type === "radio"){
-            input.checked = false;
-        }else{
+        if(input.type !== "radio"){
             input.value = "";
         }
 
     });
+
+    hideCategoryError(newBlock);
 
     const preview = newBlock.querySelector(".parcel-preview");
     preview.style.display = "none";
@@ -354,8 +379,19 @@ container.addEventListener("click", (e) => {
 
 });
 
-// IMAGE PREVIEW (event delegation)
+// IMAGE PREVIEW + CATEGORY SYNC (event delegation)
 container.addEventListener("change", (e) => {
+
+    if(e.target.classList.contains("category-radio")){
+
+        const block = e.target.closest(".parcel-block");
+
+        block.querySelector(".category-value").value = e.target.value;
+
+        hideCategoryError(block);
+
+        return;
+    }
 
     if(e.target.name !== "parcel_image[]") return;
 
@@ -379,15 +415,28 @@ form.addEventListener("submit", (e) => {
 
     for(const block of blocks){
 
-        const categorySelected = block.querySelector('input[name="category[]"]:checked');
+        const categoryValue = block.querySelector(".category-value").value;
 
-        if(!categorySelected){
+        if(!categoryValue){
 
             e.preventDefault();
 
+            block.querySelector(".category-error").style.display = "flex";
+
             block.querySelector(".category-grid").scrollIntoView({ behavior: "smooth", block: "center" });
 
-            alert("Veuillez sélectionner une catégorie pour chaque colis");
+            return;
+        }
+
+        const imageInput = block.querySelector('input[name="parcel_image[]"]');
+
+        if(imageInput.files.length === 0){
+
+            e.preventDefault();
+
+            imageInput.closest(".parcel-upload").scrollIntoView({ behavior: "smooth", block: "center" });
+
+            alert("Veuillez ajouter une photo pour chaque colis");
 
             return;
         }
@@ -396,18 +445,7 @@ form.addEventListener("submit", (e) => {
 
         for(const field of requiredFields){
 
-            if(field.type === "file" && field.files.length === 0){
-
-                e.preventDefault();
-
-                field.closest(".parcel-upload").scrollIntoView({ behavior: "smooth", block: "center" });
-
-                alert("Veuillez ajouter une photo pour chaque colis");
-
-                return;
-            }
-
-            if(field.type !== "file" && field.type !== "radio" && !field.value.trim()){
+            if(!field.value.trim()){
 
                 e.preventDefault();
 

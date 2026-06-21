@@ -24,6 +24,10 @@
                 <h3>{{ parcel.parcel_name }}</h3>
                 <p>{{ parcel.user.fullname if parcel.user else "-" }} → {{ parcel.receiver_name }}</p>
                 <span class="admin-status">{{ parcel.status }}</span>
+                <span class="admin-btn">
+                    Voir le détail
+                    <i class="ri-arrow-right-line"></i>
+                </span>
             </div>
 
         </a>
