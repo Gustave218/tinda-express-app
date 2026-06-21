@@ -20,8 +20,8 @@
 
         </div>
 
-        <a href="/logout" class="logout-btn">
-            <i class="ri-logout-box-r-line"></i>
+        <a href="/" class="logout-btn">
+            <i class="ri-home-5-line"></i>
         </a>
 
     </div>
@@ -39,9 +39,24 @@
 
     </div>
 
+    <!-- ERROR -->
+    {% if error %}
+
+    <div class="auth-error">
+
+        <i class="ri-error-warning-fill"></i>
+
+        <span>
+            {{ error }}
+        </span>
+
+    </div>
+
+    {% endif %}
+
     <!-- FORM -->
     <form
-        action="/create_parcel"
+        action="/envoyer"
         method="POST"
         enctype="multipart/form-data"
         id="parcelForm"
@@ -145,6 +160,47 @@
                 </div>
 
             </label>
+
+        </div>
+
+        <!-- SENDER -->
+        <div class="receiver-card">
+
+            <h2>
+                Expéditeur
+            </h2>
+
+            <div class="modern-input">
+                <i class="ri-user-3-fill"></i>
+
+                <input
+                    type="text"
+                    name="sender_name"
+                    placeholder="Votre nom"
+                    required
+                >
+            </div>
+
+            <div class="modern-input">
+                <i class="ri-phone-fill"></i>
+
+                <input
+                    type="tel"
+                    name="sender_phone"
+                    placeholder="Votre téléphone"
+                    required
+                >
+            </div>
+
+            <div class="modern-input">
+                <i class="ri-mail-fill"></i>
+
+                <input
+                    type="email"
+                    name="sender_email"
+                    placeholder="Votre email (pour la confirmation)"
+                >
+            </div>
 
         </div>
 
@@ -315,17 +371,6 @@
                 >
             </div>
 
-            <!-- Parcel description -->
-            <div class="modern-input">
-                <i class="ri-file-text-line"></i>
-
-                <input
-                    type="text"
-                    name="parcel_description"
-                    placeholder="Description du colis"
-                >
-            </div>
-
             <!-- IMAGE -->
             <label class="parcel-upload" id="uploadBox">
 
@@ -396,16 +441,6 @@
                 >
             </div>
 
-            <div class="modern-input">
-                <i class="ri-mail-fill"></i>
-
-                <input
-                    type="email"
-                    name="receiver_email"
-                    placeholder="Adresse email"
-                >
-            </div>
-
         </div>
 
         <!-- BUTTON -->
@@ -422,26 +457,6 @@
         </button>
 
     </form>
-
-</div>
-
-<!-- NAVBAR -->
-<div class="bottom-nav">
-
-    <a href="/dashboard" class="nav-item active">
-        <i class="ri-home-5-fill"></i>
-        <span>Accueil</span>
-    </a>
-
-    <a href="/mes-envois" class="nav-item">
-        <i class="ri-box-3-fill"></i>
-        <span>Mes envois</span>
-    </a>
-
-    <a href="/profil" class="nav-item">
-        <i class="ri-user-3-fill"></i>
-        <span>Profil</span>
-    </a>
 
 </div>
 
@@ -535,6 +550,7 @@ form.addEventListener("submit", function(e) {
         // EMPTY FIELD
         if (
             field.type !== "file" &&
+            field.type !== "radio" &&
             !field.value.trim()
         ) {
 

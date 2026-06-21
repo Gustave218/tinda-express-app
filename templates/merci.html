@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="auth-page">
+
+    <div class="auth-overlay"></div>
+
+    <div class="auth-card">
+
+        <div class="auth-logo-box">
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                class="auth-logo"
+            >
+        </div>
+
+        <h1 class="auth-title">
+            Merci !
+        </h1>
+
+        <p class="auth-subtitle">
+            Nous avons bien reçu votre demande d’envoi.<br>
+            Un agent Tinda Express vous contactera bientôt.
+        </p>
+
+        <a href="/" class="btn-auth" style="text-decoration:none;">
+            <i class="ri-home-5-fill"></i>
+            Retour à l’accueil
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
