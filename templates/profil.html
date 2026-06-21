@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dashboard-page page">
+
+    <div class="dashboard-top">
+
+        <div class="brand-box">
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                class="top-logo"
+            >
+            <div>
+                <h2>Tinda Express</h2>
+                <p>Livraison intelligente</p>
+            </div>
+        </div>
+
+        <a href="/logout" class="logout-btn">
+            <i class="ri-logout-box-r-line"></i>
+        </a>
+
+    </div>
+
+    <div class="profile-card">
+
+        <div class="profile-avatar">
+            <i class="ri-user-3-fill"></i>
+        </div>
+
+        <h2>{{ user.fullname }}</h2>
+
+        <div class="profile-info">
+
+            <div class="info-item">
+                <i class="ri-phone-line"></i>
+                <span>{{ user.phone }}</span>
+            </div>
+
+            <div class="info-item">
+                <i class="ri-mail-line"></i>
+                <span>{{ user.email or "Aucun email" }}</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="bottom-nav">
+
+    <a href="/dashboard" class="nav-item">
+        <i class="ri-home-5-fill"></i>
+        <span>Accueil</span>
+    </a>
+
+    <a href="/mes-envois" class="nav-item">
+        <i class="ri-box-3-fill"></i>
+        <span>Mes envois</span>
+    </a>
+
+    <a href="/profil" class="nav-item active">
+        <i class="ri-user-3-fill"></i>
+        <span>Profil</span>
+    </a>
+
+</div>
+
+{% endblock %}

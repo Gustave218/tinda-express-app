@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="details-page page">
+
+    <div class="dashboard-top">
+
+        <div class="brand-box">
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                class="top-logo"
+            >
+            <div>
+                <h2>{{ parcel.parcel_name }}</h2>
+                <p>{{ parcel.category }}</p>
+            </div>
+        </div>
+
+        <a href="/mes-envois" class="logout-btn">
+            <i class="ri-arrow-left-line"></i>
+        </a>
+
+    </div>
+
+    {% if parcel.parcel_image %}
+    <img src="{{ parcel.parcel_image }}" class="details-image">
+    {% endif %}
+
+    <div class="details-content">
+
+        <div class="receiver-card">
+            <h2>Statut</h2>
+            <span class="status-badge">{{ parcel.status }}</span>
+        </div>
+
+        <div class="receiver-card">
+            <h2>Destinataire</h2>
+            <p>{{ parcel.receiver_name }} • {{ parcel.receiver_phone }}</p>
+            {% if parcel.receiver_email %}<p>{{ parcel.receiver_email }}</p>{% endif %}
+        </div>
+
+        <div class="location-card">
+            <h2>Ramassage</h2>
+            <p>
+                {{ parcel.pickup_ville }}, {{ parcel.pickup_commune }}, {{ parcel.pickup_avenue }},
+                N° {{ parcel.pickup_numero }}, {{ parcel.pickup_reference }}
+            </p>
+        </div>
+
+        <div class="location-card">
+            <h2>Livraison</h2>
+            <p>
+                {{ parcel.delivery_ville }}, {{ parcel.delivery_commune }}, {{ parcel.delivery_avenue }},
+                N° {{ parcel.delivery_numero }}, {{ parcel.delivery_reference }}
+            </p>
+        </div>
+
+        {% if parcel.parcel_description %}
+        <div class="receiver-card">
+            <h2>Description</h2>
+            <p>{{ parcel.parcel_description }}</p>
+        </div>
+        {% endif %}
+
+        {% if parcel.delivery_proof_image %}
+        <div class="receiver-card">
+            <h2>Preuve de livraison</h2>
+            <img src="{{ parcel.delivery_proof_image }}" class="details-image">
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

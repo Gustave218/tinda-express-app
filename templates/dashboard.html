@@ -1,0 +1,435 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- TOPBAR -->
+    <div class="dashboard-top">
+
+        <div class="brand-box">
+
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                class="top-logo"
+            >
+
+            <div>
+                <h2>Tinda Express</h2>
+                <p>Livraison intelligente</p>
+            </div>
+
+        </div>
+
+        <a href="/logout" class="logout-btn">
+            <i class="ri-logout-box-r-line"></i>
+        </a>
+
+    </div>
+
+    <!-- TITLE -->
+    <div class="title-area">
+
+        <h1>
+            Que voulez-vous envoyer ?
+        </h1>
+
+        <p>
+            Livraison rapide et sécurisée partout en RDC
+        </p>
+
+    </div>
+
+    <!-- FORM -->
+    <form
+        action="/create_parcel"
+        method="POST"
+        enctype="multipart/form-data"
+        id="parcelForm"
+    >
+
+        <div id="parcelsContainer">
+
+            <!-- PARCEL BLOCK TEMPLATE (first one, cloned by JS) -->
+            <div class="parcel-block">
+
+                <div class="parcel-block-header">
+                    <h2>Colis <span class="parcel-index">1</span></h2>
+                    <button type="button" class="remove-parcel-btn" style="display:none;">
+                        <i class="ri-close-circle-fill"></i>
+                        Retirer ce colis
+                    </button>
+                </div>
+
+                <!-- CATEGORY GRID -->
+                <div class="category-grid">
+
+                    <label class="modern-category">
+                        <input type="radio" name="category[]" value="À manger" required>
+                        <div class="category-content">
+                            <div class="category-icon food-bg"><i class="ri-restaurant-2-fill"></i></div>
+                            <h3>À manger</h3>
+                            <p>Repas & boissons</p>
+                        </div>
+                    </label>
+
+                    <label class="modern-category">
+                        <input type="radio" name="category[]" value="Documents" required>
+                        <div class="category-content">
+                            <div class="category-icon doc-bg"><i class="ri-file-paper-2-fill"></i></div>
+                            <h3>Documents</h3>
+                            <p>Papiers importants</p>
+                        </div>
+                    </label>
+
+                    <label class="modern-category">
+                        <input type="radio" name="category[]" value="Colis fragile" required>
+                        <div class="category-content">
+                            <div class="category-icon fragile-bg"><i class="ri-box-3-fill"></i></div>
+                            <h3>Fragile</h3>
+                            <p>Objets sensibles</p>
+                        </div>
+                    </label>
+
+                    <label class="modern-category">
+                        <input type="radio" name="category[]" value="Autres" required>
+                        <div class="category-content">
+                            <div class="category-icon other-bg"><i class="ri-shopping-bag-3-fill"></i></div>
+                            <h3>Autres</h3>
+                            <p>Autres colis</p>
+                        </div>
+                    </label>
+
+                </div>
+
+                <!-- LOCATION CARD -->
+                <div class="location-card">
+
+                    <h2>Informations de livraison</h2>
+
+                    <!-- PICKUP -->
+                    <div class="location-block">
+
+                        <div class="location-left">
+                            <div class="circle-start"></div>
+                            <div class="vertical-line"></div>
+                        </div>
+
+                        <div class="location-right">
+
+                            <div class="modern-input">
+                                <i class="ri-map-pin-2-fill"></i>
+                                <input type="text" name="pickup_ville[]" placeholder="Ville de ramassage" required>
+                            </div>
+
+                            <div class="modern-input">
+                                <i class="ri-community-fill"></i>
+                                <input type="text" name="pickup_commune[]" placeholder="Commune" required>
+                            </div>
+
+                            <div class="modern-input">
+                                <i class="ri-road-map-fill"></i>
+                                <input type="text" name="pickup_avenue[]" placeholder="Avenue" required>
+                            </div>
+
+                            <div class="modern-input">
+                                <i class="ri-home-4-fill"></i>
+                                <input type="text" name="pickup_numero[]" placeholder="Numéro" required>
+                            </div>
+
+                            <div class="modern-input">
+                                <i class="ri-map-2-line"></i>
+                                <input type="text" name="pickup_reference[]" placeholder="Référence" required>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- DELIVERY -->
+                    <div class="location-block">
+
+                        <div class="location-left">
+                            <div class="circle-end"><i class="ri-map-pin-fill"></i></div>
+                        </div>
+
+                        <div class="location-right">
+
+                            <div class="modern-input">
+                                <i class="ri-map-pin-fill"></i>
+                                <input type="text" name="delivery_ville[]" placeholder="Ville de livraison" required>
+                            </div>
+
+                            <div class="modern-input">
+                                <i class="ri-community-fill"></i>
+                                <input type="text" name="delivery_commune[]" placeholder="Commune" required>
+                            </div>
+
+                            <div class="modern-input">
+                                <i class="ri-road-map-fill"></i>
+                                <input type="text" name="delivery_avenue[]" placeholder="Avenue" required>
+                            </div>
+
+                            <div class="modern-input">
+                                <i class="ri-home-4-fill"></i>
+                                <input type="text" name="delivery_numero[]" placeholder="Numéro" required>
+                            </div>
+
+                            <div class="modern-input">
+                                <i class="ri-map-2-line"></i>
+                                <input type="text" name="delivery_reference[]" placeholder="Référence" required>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- PARCEL INFO -->
+                <div class="receiver-card">
+
+                    <h2>Détails du colis</h2>
+
+                    <div class="modern-input">
+                        <i class="ri-box-3-line"></i>
+                        <input type="text" name="parcel_name[]" placeholder="Nom du colis" required>
+                    </div>
+
+                    <div class="modern-input">
+                        <i class="ri-file-text-line"></i>
+                        <input type="text" name="parcel_description[]" placeholder="Description du colis">
+                    </div>
+
+                    <!-- IMAGE -->
+                    <label class="parcel-upload upload-box-trigger">
+                        <input
+                            type="file"
+                            name="parcel_image[]"
+                            accept="image/*"
+                            required
+                        >
+                        <div class="upload-inner">
+                            <div class="upload-icon"><i class="ri-image-add-fill"></i></div>
+                            <h3>Photo du colis</h3>
+                            <p>Prendre une photo ou choisir depuis la galerie</p>
+                        </div>
+                    </label>
+
+                    <div class="parcel-preview" style="display:none;">
+                        <img>
+                    </div>
+
+                </div>
+
+                <!-- RECEIVER -->
+                <div class="receiver-card">
+
+                    <h2>Destinataire</h2>
+
+                    <div class="modern-input">
+                        <i class="ri-user-3-fill"></i>
+                        <input type="text" name="receiver_name[]" placeholder="Nom du destinataire" required>
+                    </div>
+
+                    <div class="modern-input">
+                        <i class="ri-phone-fill"></i>
+                        <input type="tel" name="receiver_phone[]" placeholder="Téléphone" required>
+                    </div>
+
+                    <div class="modern-input">
+                        <i class="ri-mail-fill"></i>
+                        <input type="email" name="receiver_email[]" placeholder="Adresse email">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ADD PARCEL -->
+        <button type="button" class="add-parcel-btn" id="addParcelBtn">
+            <i class="ri-add-circle-fill"></i>
+            Ajouter un autre colis
+        </button>
+
+        <!-- BUTTON -->
+        <button
+            type="submit"
+            class="modern-send-btn"
+            id="sendBtn"
+        >
+            <i class="ri-send-plane-fill"></i>
+            Envoyer maintenant
+        </button>
+
+    </form>
+
+</div>
+
+<!-- NAVBAR -->
+<div class="bottom-nav">
+
+    <a href="/dashboard" class="nav-item active">
+        <i class="ri-home-5-fill"></i>
+        <span>Accueil</span>
+    </a>
+
+    <a href="/mes-envois" class="nav-item">
+        <i class="ri-box-3-fill"></i>
+        <span>Mes envois</span>
+    </a>
+
+    <a href="/profil" class="nav-item">
+        <i class="ri-user-3-fill"></i>
+        <span>Profil</span>
+    </a>
+
+</div>
+
+<!-- SCRIPT -->
+<script>
+
+const container = document.getElementById("parcelsContainer");
+const addBtn = document.getElementById("addParcelBtn");
+const form = document.getElementById("parcelForm");
+const sendBtn = document.getElementById("sendBtn");
+
+function refreshBlocks(){
+
+    const blocks = container.querySelectorAll(".parcel-block");
+
+    blocks.forEach((block, idx) => {
+
+        block.querySelector(".parcel-index").textContent = idx + 1;
+
+        const removeBtn = block.querySelector(".remove-parcel-btn");
+
+        removeBtn.style.display = blocks.length > 1 ? "inline-flex" : "none";
+
+    });
+
+}
+
+addBtn.addEventListener("click", () => {
+
+    const firstBlock = container.querySelector(".parcel-block");
+    const newBlock = firstBlock.cloneNode(true);
+
+    // RESET VALUES
+    newBlock.querySelectorAll("input").forEach(input => {
+
+        if(input.type === "radio"){
+            input.checked = false;
+        }else{
+            input.value = "";
+        }
+
+    });
+
+    const preview = newBlock.querySelector(".parcel-preview");
+    preview.style.display = "none";
+    preview.querySelector("img").src = "";
+
+    container.appendChild(newBlock);
+
+    refreshBlocks();
+
+    newBlock.scrollIntoView({ behavior: "smooth", block: "start" });
+
+});
+
+// REMOVE PARCEL (event delegation)
+container.addEventListener("click", (e) => {
+
+    const btn = e.target.closest(".remove-parcel-btn");
+
+    if(!btn) return;
+
+    const block = btn.closest(".parcel-block");
+
+    block.remove();
+
+    refreshBlocks();
+
+});
+
+// IMAGE PREVIEW (event delegation)
+container.addEventListener("change", (e) => {
+
+    if(e.target.name !== "parcel_image[]") return;
+
+    const file = e.target.files[0];
+
+    if(!file) return;
+
+    const block = e.target.closest(".parcel-block");
+    const preview = block.querySelector(".parcel-preview");
+    const img = preview.querySelector("img");
+
+    img.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+
+});
+
+// VALIDATION
+form.addEventListener("submit", (e) => {
+
+    const blocks = container.querySelectorAll(".parcel-block");
+
+    for(const block of blocks){
+
+        const categorySelected = block.querySelector('input[name="category[]"]:checked');
+
+        if(!categorySelected){
+
+            e.preventDefault();
+
+            block.querySelector(".category-grid").scrollIntoView({ behavior: "smooth", block: "center" });
+
+            alert("Veuillez sélectionner une catégorie pour chaque colis");
+
+            return;
+        }
+
+        const requiredFields = block.querySelectorAll("input[required]");
+
+        for(const field of requiredFields){
+
+            if(field.type === "file" && field.files.length === 0){
+
+                e.preventDefault();
+
+                field.closest(".parcel-upload").scrollIntoView({ behavior: "smooth", block: "center" });
+
+                alert("Veuillez ajouter une photo pour chaque colis");
+
+                return;
+            }
+
+            if(field.type !== "file" && field.type !== "radio" && !field.value.trim()){
+
+                e.preventDefault();
+
+                field.focus();
+
+                field.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                alert("Veuillez remplir tous les champs");
+
+                return;
+            }
+
+        }
+
+    }
+
+    sendBtn.disabled = true;
+
+    sendBtn.innerHTML = `<i class="ri-loader-4-line spinner"></i> Veuillez patienter...`;
+
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="auth-page">
+
+    <div class="auth-overlay"></div>
+
+    <div class="auth-card">
+
+        <div class="auth-logo-box">
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                class="auth-logo"
+            >
+        </div>
+
+        <h1 class="auth-title">
+            Bon retour
+        </h1>
+
+        <p class="auth-subtitle">
+            Connectez-vous pour envoyer vos colis.
+        </p>
+
+        {% if error %}
+        <div class="auth-error">
+            <i class="ri-error-warning-fill"></i>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <form class="auth-form" method="POST">
+
+            <div class="input-box">
+                <i class="ri-phone-line"></i>
+                <input
+                    type="tel"
+                    name="phone"
+                    value="{{ request.form.get('phone', '') }}"
+                    placeholder="Téléphone"
+                    required
+                >
+            </div>
+
+            <div class="input-box password-box">
+                <i class="ri-lock-2-line"></i>
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Mot de passe"
+                    id="password"
+                    required
+                >
+                <button type="button" class="toggle-password" onclick="togglePassword()">
+                    <i class="ri-eye-line" id="eyeIcon"></i>
+                </button>
+            </div>
+
+            <button class="btn-auth" id="loginBtn">
+                <i class="ri-login-box-fill"></i>
+                Se connecter
+            </button>
+
+        </form>
+
+        <div class="auth-bottom">
+            <span>Pas encore de compte ?</span>
+            <a href="/register">Créer un compte</a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function togglePassword(){
+
+    const password = document.getElementById("password");
+    const eyeIcon = document.getElementById("eyeIcon");
+
+    if(password.type === "password"){
+        password.type = "text";
+        eyeIcon.className = "ri-eye-off-line";
+    }else{
+        password.type = "password";
+        eyeIcon.className = "ri-eye-line";
+    }
+}
+
+document.querySelector(".auth-form").addEventListener("submit", function(){
+
+    const btn = document.getElementById("loginBtn");
+
+    btn.innerHTML = `<i class="ri-loader-4-line spin"></i> Veuillez patienter...`;
+    btn.disabled = true;
+});
+
+</script>
+
+{% endblock %}

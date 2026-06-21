@@ -2153,3 +2153,58 @@ body{
     box-sizing:border-box !important;
     max-width:100% !important;
 }
+
+/* MULTI PARCEL BLOCKS */
+
+.parcel-block{
+    border-top:2px dashed #e5e7eb;
+    margin-top:30px;
+    padding-top:25px;
+}
+
+.parcel-block:first-child{
+    border-top:none;
+    margin-top:0;
+    padding-top:0;
+}
+
+.parcel-block-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:15px;
+}
+
+.parcel-block-header h2{
+    margin:0;
+}
+
+.remove-parcel-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:none;
+    background:none;
+    color:#ff4d4f;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    padding:8px 0;
+}
+
+.add-parcel-btn{
+    width:100%;
+    height:58px;
+    border:2px dashed #ff8a00;
+    border-radius:18px;
+    background:transparent;
+    color:#ff8a00;
+    font-size:16px;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    cursor:pointer;
+    margin-top:25px;
+}

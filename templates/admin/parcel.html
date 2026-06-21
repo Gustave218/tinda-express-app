@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="admin-details-page page">
+
+    {% if parcel.parcel_image %}
+    <div style="position:relative;">
+        <img src="{{ parcel.parcel_image }}" class="admin-hero-image">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>{{ parcel.parcel_name }}</h1>
+            <span class="hero-status">{{ parcel.status }}</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="admin-details-wrapper">
+
+        <div class="admin-section-card">
+            <h2 class="section-title">Expéditeur</h2>
+            <div class="info-grid">
+                <div class="info-item">{{ parcel.user.fullname if parcel.user else "-" }}</div>
+                <div class="info-item">{{ parcel.user.phone if parcel.user else "-" }}</div>
+                <div class="info-item">{{ parcel.user.email if parcel.user else "-" }}</div>
+            </div>
+        </div>
+
+        <div class="admin-section-card">
+            <h2 class="section-title">Destinataire</h2>
+            <div class="info-grid">
+                <div class="info-item">{{ parcel.receiver_name }}</div>
+                <div class="info-item">{{ parcel.receiver_phone }}</div>
+                <div class="info-item">{{ parcel.receiver_email or "-" }}</div>
+            </div>
+        </div>
+
+        <div class="admin-section-card">
+            <h2 class="section-title">Ramassage</h2>
+            <p>
+                {{ parcel.pickup_ville }}, {{ parcel.pickup_commune }}, {{ parcel.pickup_avenue }},
+                N° {{ parcel.pickup_numero }}, {{ parcel.pickup_reference }}
+            </p>
+        </div>
+
+        <div class="admin-section-card">
+            <h2 class="section-title">Livraison</h2>
+            <p>
+                {{ parcel.delivery_ville }}, {{ parcel.delivery_commune }}, {{ parcel.delivery_avenue }},
+                N° {{ parcel.delivery_numero }}, {{ parcel.delivery_reference }}
+            </p>
+        </div>
+
+        {% if parcel.delivery_proof_image %}
+        <div class="proof-admin-box">
+            <h2 class="section-title">Preuve de livraison</h2>
+            <img src="{{ parcel.delivery_proof_image }}" class="proof-admin-image">
+        </div>
+        {% endif %}
+
+        <form
+            class="admin-update-form"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <div class="select-wrapper">
+                <select name="status">
+                    {% for s in ["En attente", "Pris en charge", "En transit", "Livré"] %}
+                    <option value="{{ s }}" {% if parcel.status == s %}selected{% endif %}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <label class="custom-upload">
+                <input type="file" name="delivery_proof_image" accept="image/*">
+                <div class="upload-box">
+                    <i class="ri-camera-fill"></i>
+                    <span>Photo de preuve de livraison</span>
+                </div>
+            </label>
+
+            <button type="submit" class="admin-save-btn">
+                <i class="ri-save-3-fill"></i>
+                Enregistrer
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

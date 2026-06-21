@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dashboard-page page">
+
+    <div class="dashboard-top">
+
+        <div class="brand-box">
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                class="top-logo"
+            >
+            <div>
+                <h2>Tinda Express</h2>
+                <p>Livraison intelligente</p>
+            </div>
+        </div>
+
+        <a href="/logout" class="logout-btn">
+            <i class="ri-logout-box-r-line"></i>
+        </a>
+
+    </div>
+
+    <div class="title-area">
+        <h1>Mes envois</h1>
+        <p>Suivez l’état de vos colis</p>
+    </div>
+
+    {% if parcels %}
+
+    <div class="parcel-grid">
+
+        {% for parcel in parcels %}
+
+        <div class="modern-parcel-card">
+
+            {% if parcel.parcel_image %}
+            <img src="{{ parcel.parcel_image }}" class="parcel-image">
+            {% endif %}
+
+            <div class="parcel-category">{{ parcel.category }}</div>
+
+            <div class="parcel-content">
+
+                <div class="parcel-status-row">
+                    <h3>{{ parcel.parcel_name }}</h3>
+                    <span class="status-badge">{{ parcel.status }}</span>
+                </div>
+
+                <div class="parcel-info">
+                    <div class="info-line">
+                        <i class="ri-user-3-line"></i>
+                        {{ parcel.receiver_name }}
+                    </div>
+                    <div class="info-line">
+                        <i class="ri-map-pin-line"></i>
+                        {{ parcel.delivery_ville }}, {{ parcel.delivery_commune }}
+                    </div>
+                </div>
+
+                <a href="/parcel/{{ parcel.id }}" class="view-btn">
+                    Voir les détails
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-box">
+        <div class="empty-icon">
+            <i class="ri-box-3-line"></i>
+        </div>
+        <p>Vous n’avez encore envoyé aucun colis</p>
+        <a href="/dashboard" class="send-first-btn">Envoyer un colis</a>
+    </div>
+
+    {% endif %}
+
+</div>
+
+<div class="bottom-nav">
+
+    <a href="/dashboard" class="nav-item">
+        <i class="ri-home-5-fill"></i>
+        <span>Accueil</span>
+    </a>
+
+    <a href="/mes-envois" class="nav-item active">
+        <i class="ri-box-3-fill"></i>
+        <span>Mes envois</span>
+    </a>
+
+    <a href="/profil" class="nav-item">
+        <i class="ri-user-3-fill"></i>
+        <span>Profil</span>
+    </a>
+
+</div>
+
+{% endblock %}

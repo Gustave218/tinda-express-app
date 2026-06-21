@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="admin-page page">
+
+    <div class="page-header">
+        <h1>Tableau de bord admin</h1>
+        <a href="/logout" class="logout-btn">
+            <i class="ri-logout-box-r-line"></i>
+        </a>
+    </div>
+
+    <div class="admin-grid">
+
+        {% for parcel in parcels %}
+
+        <a href="/admin/parcel/{{ parcel.id }}" class="admin-card">
+
+            {% if parcel.parcel_image %}
+            <img src="{{ parcel.parcel_image }}" class="admin-image">
+            {% endif %}
+
+            <div class="admin-content">
+                <h3>{{ parcel.parcel_name }}</h3>
+                <p>{{ parcel.user.fullname if parcel.user else "-" }} → {{ parcel.receiver_name }}</p>
+                <span class="admin-status">{{ parcel.status }}</span>
+            </div>
+
+        </a>
+
+        {% else %}
+
+        <p>Aucune demande pour le moment.</p>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
